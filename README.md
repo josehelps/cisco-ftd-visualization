@@ -6,7 +6,7 @@ An interactive 3D visualization demonstrating the data flow from endpoints throu
 
 View the live demo: [https://josehelps.github.io/cisco-ftd-visualization](https://josehelps.github.io/cisco-ftd-visualization)
 
-![Visualization Preview](public/preview.png)
+![Visualization Preview](preview.png)
 
 ## ✨ Features
 
@@ -18,17 +18,16 @@ View the live demo: [https://josehelps.github.io/cisco-ftd-visualization](https:
 
 ## 🛠️ Technologies
 
-- React.js
 - Three.js for 3D visualization
-- Next.js for easy development and deployment
-- Tailwind CSS for styling
+- Vanilla JavaScript
+- HTML5 & CSS3
 
 ## 🏗️ Setup and Development
 
 ### Prerequisites
 
-- Node.js (v18 or newer)
-- npm or yarn
+- A modern web browser
+- A local web server (optional, but recommended)
 
 ### Local Development
 
@@ -38,23 +37,27 @@ git clone https://github.com/josehelps/cisco-ftd-visualization.git
 cd cisco-ftd-visualization
 ```
 
-2. Install dependencies:
+2. Start a local server (choose one method):
+
+Using Python:
 ```bash
-npm install
+# Python 3
+python -m http.server 8000
+
+# Python 2
+python -m SimpleHTTPServer 8000
 ```
 
-3. Start the development server:
+Using Node.js:
 ```bash
-npm run dev
+# Install serve globally
+npm install -g serve
+
+# Run the server
+serve
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the visualization.
-
-### Building for Production
-
-```bash
-npm run build
-```
+3. Open [http://localhost:8000](http://localhost:8000) in your browser to see the visualization.
 
 ## 📱 Embedding
 
@@ -86,3 +89,13 @@ Each component represents a key part of the security architecture:
 - **Cisco FTD** provides next-generation firewall capabilities
 - **FMC** centrally manages firewall policies and configurations
 - **Splunk** analyzes security data to detect and respond to threats
+
+## 📦 Project Structure
+
+```
+cisco-ftd-visualization/
+├── index.html          # Main HTML file
+├── visualization.js    # Three.js visualization code
+├── preview.png         # Preview image
+└── README.md          # This file
+```
