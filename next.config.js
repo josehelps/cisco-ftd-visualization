@@ -6,6 +6,8 @@ const nextConfig = {
   },
   basePath: '/cisco-ftd-visualization',
   assetPrefix: '/cisco-ftd-visualization/',
+  trailingSlash: true,
+  distDir: 'out'
 };
 
 module.exports = nextConfig; 
