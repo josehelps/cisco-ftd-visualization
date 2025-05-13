@@ -6,55 +6,183 @@
     <title>Cisco FTD Visualization</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJESURBVFhH7ZbPSxtBFMe/u9n8MJpGE2NijdUqiCAePHiwFg+CUCi0/gEFL/0TPHvxLnjxIP0H2ksvvRVKQYQKQkF6EwtFqa0k2qqJJiZmk93+mN1OZ9dNsmTJZhsPffAls7Oz+z7z3pvZXWJwvA7+J/5tAMrS0hKy2Sw8z0OpVILjOBBCwLZtxGIxJBIJjI6OYnBwEMPDw2hra4NpmjXxr/InAel0GhsbGzg5OUE0GkUymUQsFkM4HK4G2LaNfD6PXC6Hs7MzWJaF8fFxTE1NVWNuoi6AZVlYX1/H4eEhRkZGMDMzg0gkUo2ojed5yGQy2N7exvn5OSYnJzE7O1uNqEXNFGxubmJ3dxcTExOYn5+/VTxgGAZ6e3uxsLCA6elp7O3tYXV1FcVisTr6lfcAzvn7wNHREQYGBjA3N4dQKFSNuB+u62J5eRm5XA5dXV3VaKCjo6N6FahOQTqdxtHREWZmZh4kHgiHw5ifn8f+/j4KhQIymQz6+/vR3t5ejTiohHieV11S9/FjGhoa0NnZiXQ6jdPTUxQKBfT09CAej1cjAiohQRD+kXggFAqhqakJx8fHKJfLsG0bra2t1dEAzjnK5TLa29vR2NhYjT4MQgji8Ti6u7tx1/MgEAohhBDgnN+5TO+LUopwOIxkMonm5uZq9O8QhmGgpaUFiUSiGrkbQghM00RjYyOi0Wg1+nAopYhEImhqaoJhGNXo3QiO4+D19RWcc1BKQQgBpRSMMViWhefnZ7y8vKBYLOLi4gKu61a/+Rk+ASEwPNk/WxJGAAAAAElFTkSuQmCC">
     <style>
-        body { margin: 0; }
-        canvas { display: block; }
+        body { 
+            margin: 0; 
+            overflow: hidden;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0a1a;
+            color: #ffffff;
+        }
+        
+        canvas { 
+            display: block; 
+        }
+        
         .info {
             position: absolute;
             bottom: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
+            right: 20px;
+            background: rgba(10, 10, 30, 0.85);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(100, 150, 255, 0.5);
+            box-shadow: 0 0 20px rgba(20, 40, 100, 0.4);
+            backdrop-filter: blur(5px);
+            max-width: 300px;
+            z-index: 100;
+            transition: all 0.3s ease;
         }
+        
+        .info h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #66aaff;
+            text-shadow: 0 0 8px rgba(100, 180, 255, 0.5);
+            border-bottom: 1px solid rgba(100, 150, 255, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        .info p {
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .info .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .info .color-box {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            border-radius: 3px;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+        
+        .info .footer-note {
+            font-size: 12px;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(100, 150, 255, 0.3);
+            color: #aabbcc;
+        }
+        
         .loading {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
+            background: rgba(10, 10, 30, 0.9);
+            padding: 30px 50px;
+            border-radius: 10px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: white;
+            border: 1px solid rgba(100, 150, 255, 0.5);
+            box-shadow: 0 0 30px rgba(20, 40, 100, 0.6);
+            z-index: 1000;
         }
+        
+        .loading:after {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 30px;
+            margin: 20px auto 0;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #66aaff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         .error {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(255, 0, 0, 0.1);
-            color: red;
-            padding: 20px;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
+            background: rgba(100, 20, 20, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            border: 1px solid rgba(255, 100, 100, 0.5);
+            box-shadow: 0 0 30px rgba(100, 20, 20, 0.6);
             display: none;
+            z-index: 1000;
+        }
+        
+        .title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 10px rgba(100, 180, 255, 0.8);
+            z-index: 100;
+        }
+        
+        .subtitle {
+            position: absolute;
+            top: 55px;
+            left: 20px;
+            font-size: 16px;
+            color: #66aaff;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
+    <div class="title">Cisco FTD Security Visualization</div>
+    <div class="subtitle">Data Flow from Endpoints to Splunk Analytics</div>
+    
     <div id="loading" class="loading">Loading visualization...</div>
     <div id="error" class="error">Failed to load visualization. Please check your internet connection and try again.</div>
+    
     <div id="info" class="info">
-        <h3>Cisco FTD to Splunk Data Flow</h3>
-        <p>
-            <span style="display: inline-block; width: 12px; height: 12px; background: #2c3e50; margin-right: 5px;"></span> Endpoints
-            <span style="display: inline-block; width: 12px; height: 12px; background: #e74c3c; margin: 0 5px;"></span> Cisco FTD
-            <span style="display: inline-block; width: 12px; height: 12px; background: #3498db; margin: 0 5px;"></span> FMC
-            <span style="display: inline-block; width: 12px; height: 12px; background: #1abc9c; margin: 0 5px;"></span> Splunk
-            <span style="display: inline-block; width: 12px; height: 12px; background: #f39c12; margin: 0 5px;"></span> Data Packets
+        <h3>FTD to Splunk Data Flow</h3>
+        <div class="legend-item">
+            <span class="color-box" style="background: #0078d7;"></span>
+            <span>Windows Endpoints</span>
+        </div>
+        <div class="legend-item">
+            <span class="color-box" style="background: #f9a834;"></span>
+            <span>Linux Endpoints</span>
+        </div>
+        <div class="legend-item">
+            <span class="color-box" style="background: #e74c3c;"></span>
+            <span>Cisco FTD</span>
+        </div>
+        <div class="legend-item">
+            <span class="color-box" style="background: #3498db;"></span>
+            <span>FMC (Management Center)</span>
+        </div>
+        <div class="legend-item">
+            <span class="color-box" style="background: #1abc9c;"></span>
+            <span>Splunk FTD detections</span>
+        </div>
+        <div class="legend-item">
+            <span class="color-box" style="background: #f39c12;"></span>
+            <span>Security Event Data</span>
+        </div>
+        
+        <p class="footer-note">
+            Data flow: Endpoints → FTD → FMC → Splunk<br>
+            <br>
+            Press R to toggle rotation<br>
+            Drag to manually rotate | Scroll to zoom
         </p>
-        <p style="font-size: 12px;">Drag to rotate | Scroll to zoom</p>
     </div>
+    
     <script type="module" src="visualization.js" onerror="document.getElementById('error').style.display='block';document.getElementById('loading').style.display='none';"></script>
 </body>
 </html> 
